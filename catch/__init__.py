@@ -1,14 +1,22 @@
-def do_nothing(*args, **kwargs):
-    return None
+from typing import Callable, Any
 
 
-def catch(exceptions: Exception | tuple = Exception, call=do_nothing):
+def catch(
+    exceptions: Exception | tuple = Exception,
+    call: Callable = lambda *_: None,
+    ret: Any = ...,
+):
     def decorator(func):
         def wrapper(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
             except exceptions as exception:
-                return call(exception, *args, **kwargs)
+                call_return = call(exception, *args, **kwargs)
+
+                if ret is not Ellipsis:
+                    return ret
+
+                return call_return
 
         return wrapper
 
