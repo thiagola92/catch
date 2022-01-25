@@ -1,9 +1,9 @@
-# catch
+# la-catch
 Decorator to catch exception(s) and call function to handle the error. Can also define a return value to the function after catching.  
 There is no benifits from using this decorator other than letting the code more readable (arguable).  
 
 # install
-`pip install git+https://github.com/thiagola92/catch#egg=catch`
+`pip install la-catch`  
 
 # syntax
 ```python
@@ -17,6 +17,9 @@ In case an exception is raised and no `ret` was defined, the return will be the 
 
 # example
 ```python
+from la_catch import catch
+
+
 @catch(Timeout, logging.exception, ret=[])
 def scrap_details(url):
     response = requests.get("https://www.amazon.com/dp/B00YFTHJ9C")
@@ -28,6 +31,9 @@ def scrap_details(url):
 # usages
 No `Exception` will be raise and `None` will be returned.  
 ```python
+from la_catch import catch
+
+
 @catch(Exception)
 def example():
     # code here
@@ -35,6 +41,9 @@ def example():
 
 No `Exception` will be raise and `func` will be called with the exception.  
 ```python
+from la_catch import catch
+
+
 def func(e):
     print("Exception raised: ", e)
 
@@ -46,6 +55,9 @@ def example():
 
 No `Exception` will be raise, `func` will be called with the exception and `False` will be returned by `example()`.  
 ```python
+from la_catch import catch
+
+
 def func(e):
     print("Exception raised: ", e)
 
@@ -59,6 +71,9 @@ def example():
 
 No `Exception` will be raise, `func` will be called with the exception and `False` will be returned by `example()`.  
 ```python
+from la_catch import catch
+
+
 def func(e):
     print("Exception raised: ", e)
 

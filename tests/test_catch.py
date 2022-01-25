@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 
-from catch import catch
+from la_catch import catch
 
 
 class CatchError(Exception):

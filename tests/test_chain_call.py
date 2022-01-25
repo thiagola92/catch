@@ -2,7 +2,7 @@ import unittest
 from unittest import TestCase
 from unittest.mock import Mock
 
-from catch import catch
+from la_catch import catch
 
 
 class CatchError(Exception):
