@@ -13,41 +13,48 @@ class CatchMeTooError(Exception):
 
 
 class TestCatch(TestCase):
+    """
+    Test catching exception(s).
+    We go through every way the user can pass exception(s).
+    Not passing exception is the same as catching Exception.
+    """
+
     @catch()
     def test_catch_error_0(self):
-        raise CatchError("Test catching default exception and doing nothing")
+        raise CatchError()
 
     @catch(CatchError)
     def test_catch_error_1(self):
-        raise CatchError("Test catching exception and doing nothing")
+        raise CatchError()
 
     @catch(exceptions=CatchError)
     def test_catch_error_2(self):
-        raise CatchError("Test catching exception throught keyword and doing nothing")
+        raise CatchError()
 
     @catch((CatchError,))
     def test_catch_error_3(self):
-        raise CatchError("Test catching exception inside a tuple and doing nothing")
+        raise CatchError()
 
     @catch(exceptions=(CatchError,))
     def test_catch_error_4(self):
-        raise CatchError("Test catching exception inside a tuple throught keyword and doing nothing")
+        raise CatchError()
 
     @catch((CatchError, CatchMeTooError))
     def test_catch_error_5(self):
-        raise CatchError("Test catching first exception and doing nothing")
+        raise CatchError()
 
     @catch(exceptions=(CatchError, CatchMeTooError))
     def test_catch_error_6(self):
-        raise CatchError("Test catching first exception throught keyword and doing nothing")
+        raise CatchError()
 
     @catch((CatchError, CatchMeTooError))
     def test_catch_error_7(self):
-        raise CatchMeTooError("Test catching second exception and doing nothing")
+        raise CatchMeTooError()
 
     @catch(exceptions=(CatchError, CatchMeTooError))
     def test_catch_error_8(self):
-        raise CatchMeTooError("Test catching second exception throught keyword and doing nothing")
+        raise CatchMeTooError()
+
 
 if __name__ == "__main__":
     unittest.main()

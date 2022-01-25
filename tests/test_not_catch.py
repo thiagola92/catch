@@ -17,63 +17,58 @@ class CatchMeTooError(Exception):
 
 
 class TestNotCatch(TestCase):
+    """
+    Test not catching unwanted exceptions.
+    We go through every way the user can pass exception(s).
+    """
+
     def test_not_catch_1(self):
         with self.assertRaises(DontCatchError):
-            self._dont_catch_error_1()
+            self._call_1()
 
     def test_not_catch_2(self):
         with self.assertRaises(DontCatchError):
-            self._dont_catch_error_2()
+            self._call_2()
 
     def test_not_catch_3(self):
         with self.assertRaises(DontCatchError):
-            self._dont_catch_error_3()
+            self._call_3()
 
     def test_not_catch_4(self):
         with self.assertRaises(DontCatchError):
-            self._dont_catch_error_4()
+            self._call_4()
 
     def test_not_catch_5(self):
         with self.assertRaises(DontCatchError):
-            self._dont_catch_error_5()
+            self._call_5()
 
     def test_not_catch_6(self):
         with self.assertRaises(DontCatchError):
-            self._dont_catch_error_6()
+            self._call_6()
 
     @catch(CatchError)
-    def _dont_catch_error_1(self):
-        raise DontCatchError("Test passing one exception that is never raised")
+    def _call_1(self):
+        raise DontCatchError()
 
     @catch((CatchError,))
-    def _dont_catch_error_2(self):
-        raise DontCatchError(
-            "Test passing one exception that is never raised inside a tuple"
-        )
+    def _call_2(self):
+        raise DontCatchError()
 
     @catch(exceptions=CatchError)
-    def _dont_catch_error_3(self):
-        raise DontCatchError(
-            "Test passing one exception that is never raised throught keyword"
-        )
+    def _call_3(self):
+        raise DontCatchError()
 
     @catch(exceptions=(CatchError,))
-    def _dont_catch_error_4(self):
-        raise DontCatchError(
-            "Test passing one exception that is never raised inside a tuple throught keyword"
-        )
+    def _call_4(self):
+        raise DontCatchError()
 
     @catch((CatchError, CatchMeTooError))
-    def _dont_catch_error_5(self):
-        raise DontCatchError(
-            "Test passing two exceptions that are never raised inside a tuple"
-        )
+    def _call_5(self):
+        raise DontCatchError()
 
     @catch(exceptions=(CatchError, CatchMeTooError))
-    def _dont_catch_error_6(self):
-        raise DontCatchError(
-            "Test passing two exceptions that are never raised inside a tuple throught keyword"
-        )
+    def _call_6(self):
+        raise DontCatchError()
 
 
 if __name__ == "__main__":

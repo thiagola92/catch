@@ -9,27 +9,19 @@ class CatchError(Exception):
     pass
 
 
-f = Mock()
 e1 = CatchError()
 e2 = CatchError()
 
 
-class TestChainCall(TestCase):
+class TestChainCatch(TestCase):
     """
-    Test catch and calling a function after other catch happen.
+    Test catch after other catch happen.
     """
 
-    def setUp(self) -> None:
-        f.reset_mock(return_value=True, side_effect=True)
-
-        return super().setUp()
-
-    def test_chain_call(self):
+    def test_chain_catch(self):
         self._call_first()
 
-        f.assert_called_once_with(e2, e1, self)
-
-    @catch(CatchError, f)
+    @catch(CatchError)
     def _call_second(e, self):
         raise e2
 
