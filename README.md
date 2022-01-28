@@ -26,7 +26,7 @@ def example():
     raise Exception("What a great day to raise an exception")
 ```
 
-Most of times you want at least to print the exception, in this case you can pass a function to be called. This function will receive the exception as the last argument and you can use as you like.  
+Most of times you want at least to print the exception, in this case you can pass a function to be called. This function will receive the exception as the last argument for you use as you like.  
 ```python
 from la_catch import catch
 
@@ -40,7 +40,7 @@ def example():
     raise Exception("You will never catch me alive")
 ```
 
-If all that you want is print the exception or traceback, i would recommend you passing `logging.exception` as `call`.  
+If all that you want is print the exception/traceback, i would recommend you passing `logging.exception` as `call`.  
 ```python
 from la_catch import catch
 
