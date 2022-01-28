@@ -15,21 +15,6 @@ Decorator to catch exception(s) and call function to handle the error. Can also 
 `call` receives the same arguments from the decorated function but it appends the exception raised to the list of arguments (`*args`).  
 In case an exception is raised and no `ret` was defined, the return will be the same that `call` would return.  
 
-# example
-```python
-from la_catch import catch
-
-
-@catch(Timeout, logging.exception, ret=[])
-def scrap_details(url):
-    response = requests.get("https://www.amazon.com/dp/B00YFTHJ9C")
-    selector = Selector(text=response.content)
-
-    return selector.xpath('//li[@class="swatchAvailable"]//div[@class="twisterSlotDiv "]').getall()
-```
-
-In this function raises an exception, `logging.exception` will be called and receive the exception and the function `scrap_details` will return an empty list.  
-
 # usages
 Let's say that you just expect a function to try running something and if fails ignore and continue the program logic. In this case you just want to catch and ignore the exception:  
 ```python
