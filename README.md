@@ -67,7 +67,7 @@ def example():
     return 0/0
 ```
 
-Okay okay, but now you want to log the exception and return something so you program doesn't crash or ignore. Just pass to `ret` the value to return in case of this exception.  
+Okay okay, but now you want to log the exception and return something so you program doesn't crash. Better than creating a function just for this two things is passing to `ret` the value to return in case of this exception.  
 ```python
 from la_catch import catch
 
