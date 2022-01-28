@@ -9,7 +9,7 @@ class CatchError(Exception):
     pass
 
 
-def func(e, self):
+def func(self, e):
     pass
 
 
@@ -32,7 +32,7 @@ class TestCallRet(TestCase):
 
         assert r == 10
         
-        f.assert_called_once_with(e, self)
+        f.assert_called_once_with(self, e)
 
     @catch(CatchError, f)
     def _call(self):

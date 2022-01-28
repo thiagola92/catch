@@ -11,7 +11,7 @@ def catch(
             try:
                 return func(*args, **kwargs)
             except exceptions as exception:
-                call_return = call(exception, *args, **kwargs)
+                call_return = call(*args, exception, **kwargs)
 
                 if ret is not Ellipsis:
                     return ret

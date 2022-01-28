@@ -27,10 +27,10 @@ class TestChainCall(TestCase):
     def test_chain_call(self):
         self._call_first()
 
-        f.assert_called_once_with(e2, e1, self)
+        f.assert_called_once_with(self, e1, e2)
 
     @catch(CatchError, f)
-    def _call_second(e, self):
+    def _call_second(self, e):
         raise e2
 
     @catch(CatchError, _call_second)

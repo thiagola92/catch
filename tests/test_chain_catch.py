@@ -22,7 +22,7 @@ class TestChainCatch(TestCase):
         self._call_first()
 
     @catch(CatchError)
-    def _call_second(e, self):
+    def _call_second(self, e):
         raise e2
 
     @catch(CatchError, _call_second)
