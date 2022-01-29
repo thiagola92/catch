@@ -42,6 +42,7 @@ def example():
 
 If all that you want is print the exception/traceback, i would recommend you passing `logging.exception` as `call`.  
 ```python
+import logging
 from la_catch import catch
 
 
@@ -69,6 +70,7 @@ def example():
 
 Okay okay, but now you want to log the exception and return something so you program doesn't crash. Better than creating a function just for this two things is passing to `ret` the value to return in case of this exception.  
 ```python
+import logging
 from la_catch import catch
 
 
@@ -89,6 +91,7 @@ def example():
 
 If you want to make different things to different exceptions just decorate with one more catch.  
 ```python
+import logging
 from la_catch import catch
 
 
@@ -98,7 +101,7 @@ def example():
     return 0/0
 ```
 
-Just remember that exception is always pass as the last argument from `call`.  
+Just remember that exception is always pass as the last argument from `call` (not counting **kwargs).  
 ```python
 from la_catch import catch
 
@@ -110,4 +113,15 @@ def func(a, b, e):
 @catch(ZeroDivisionError, func, 0)
 def example(a, b):
     return a/b
+```
+
+The default behaviour is including the function arguments in your `call`, but you can choose not to send them. For example, you don't need this extra arguments in the `logging.exception`.  
+```python
+import logging
+from la_catch import catch
+
+
+@catch(Exception, logging.exception, include_args=False)
+def example(a, b, c, d=1, e=2, f=3):
+    raise Exception("You are a picky eater")
 ```
