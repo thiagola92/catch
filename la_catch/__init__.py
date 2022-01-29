@@ -1,5 +1,4 @@
 from typing import Callable, Any
-from xmlrpc.client import Boolean
 
 
 def catch(
