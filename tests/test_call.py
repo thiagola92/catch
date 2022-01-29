@@ -53,6 +53,35 @@ class TestCall(TestCase):
         self._call_6(1, b=2)
 
         f.assert_called_once_with(self, 1, e, b=2)
+    
+    def test_call_7(self):
+        TestCall._call_7()
+
+        f.assert_called_once_with(e)
+    
+    def test_call_8(self):
+        TestCall._call_8(1)
+
+        f.assert_called_once_with(1, e)
+    
+    def test_call_9(self):
+        TestCall._call_9(a=1)
+
+        f.assert_called_once_with(e, a=1)
+    
+    def test_call_10(self):
+        TestCall._call_10(a=1)
+
+        f.assert_called_once_with(e, a=1)
+    
+    def test_call_11(self):
+        TestCall._call_11()
+    
+    def test_call_12(self):
+        TestCall._call_12(1)
+    
+    def test_call_13(self):
+        TestCall._call_13(a=1)
 
     @catch(CatchError, f)
     def _call_1(self):
@@ -76,6 +105,34 @@ class TestCall(TestCase):
 
     @catch(CatchError, f)
     def _call_6(self, a, b):
+        raise e
+
+    @catch(CatchError, f)
+    def _call_7():
+        raise e
+
+    @catch(CatchError, f)
+    def _call_8(a):
+        raise e
+
+    @catch(CatchError, f)
+    def _call_9(a):
+        raise e
+
+    @catch(CatchError, f)
+    def _call_10(a=1):
+        raise e
+
+    @catch(CatchError)
+    def _call_11():
+        raise e
+
+    @catch(CatchError)
+    def _call_12(a):
+        raise e
+
+    @catch(CatchError)
+    def _call_13(a):
         raise e
 
 

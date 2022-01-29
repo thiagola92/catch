@@ -3,7 +3,7 @@ from typing import Callable, Any
 
 def catch(
     exceptions: Exception | tuple = Exception,
-    call: Callable = lambda *_: None,
+    call: Callable = lambda *args, **kwargs: None,
     ret: Any = ...,
 ):
     def decorator(func):
