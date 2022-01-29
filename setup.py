@@ -19,7 +19,6 @@ setup(
     ],
     keywords="decorator, exception, catch",
     license="MIT",
-    package_dir={'': 'la_catch'},
     packages=find_packages(exclude=["tests"]),
     python_requires=">=3.10",
 )
