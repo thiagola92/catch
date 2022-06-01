@@ -11,6 +11,7 @@ Decorator to catch exception(s) and call function to handle the error. Can also 
 `exceptions` - Exception or Tuple of exceptions to be captured  
 `call` - function to be called in case of exceptions being raised  
 `ret` - value to be returned by the main function in case of exceptions being raised  
+`include_args` - flag telling if should or not pass the arguments to the function
 
 `call` receives the same arguments from the decorated function but it appends the exception raised to the list of arguments (`*args`).  
 In case an exception is raised and no `ret` was defined, the return will be the same that `call` would return.  
