@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 
-from la_catch import catch
+from la_catch import Catch
 
 
 class DontCatchError(Exception):
@@ -46,27 +46,27 @@ class TestNotCatch(TestCase):
         with self.assertRaises(DontCatchError):
             self._call_6()
 
-    @catch(CatchError)
+    @Catch(CatchError)
     def _call_1(self):
         raise DontCatchError()
 
-    @catch((CatchError,))
+    @Catch((CatchError,))
     def _call_2(self):
         raise DontCatchError()
 
-    @catch(exceptions=CatchError)
+    @Catch(exceptions=CatchError)
     def _call_3(self):
         raise DontCatchError()
 
-    @catch(exceptions=(CatchError,))
+    @Catch(exceptions=(CatchError,))
     def _call_4(self):
         raise DontCatchError()
 
-    @catch((CatchError, CatchMeTooError))
+    @Catch((CatchError, CatchMeTooError))
     def _call_5(self):
         raise DontCatchError()
 
-    @catch(exceptions=(CatchError, CatchMeTooError))
+    @Catch(exceptions=(CatchError, CatchMeTooError))
     def _call_6(self):
         raise DontCatchError()
 
