@@ -36,6 +36,9 @@ class Catch:
         *args,
         **kwargs,
     ):
+        if not isinstance(exceptions, tuple):
+            exceptions = (exceptions,)
+
         self._exceptions = exceptions
         self._callback = callback
         self._args = args
