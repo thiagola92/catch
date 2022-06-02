@@ -51,7 +51,10 @@ class Catch:
         if type not in self._exceptions:
             return False
 
-        self._kwargs |= {"exception": value}
+        if self._kwargs:
+            self._kwargs |= {"exception": value}
+        else:
+            self._args = self._args + (value,)
 
         if callable(self._callback):
             self._callback(*self._args, **self._kwargs)
@@ -94,7 +97,10 @@ class Catch:
         if type not in self._exceptions:
             return False
 
-        self._kwargs |= {"exception": value}
+        if self._kwargs:
+            self._kwargs |= {"exception": value}
+        else:
+            self._args = self._args + (value,)
 
         if callable(self._callback) and iscoroutinefunction(self._callback):
             await self._callback(*self._args, **self._kwargs)

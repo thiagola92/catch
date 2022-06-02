@@ -1,20 +1,21 @@
 # la-catch
-Decorator to catch exception(s) and call function to handle the error. Can also define a return value to the function after catching.  
+Decorator and context manager to catch exception(s) and call a function to handle the error.  
 
 # install
 `pip install la-catch`  
 
 # syntax
 ```python
-@catch(exceptions, call, ret)
+@Catch(exceptions, callback)
 ```
 `exceptions` - Exception or Tuple of exceptions to be captured  
-`call` - function to be called in case of exceptions being raised  
-`ret` - value to be returned by the main function in case of exceptions being raised  
-`include_args` - flag telling if should or not pass the arguments to the function
+`callback` - function to be called in case of exceptions being raised  
 
-`call` receives the same arguments from the decorated function but it appends the exception raised to the list of arguments (`*args`).  
-In case an exception is raised and no `ret` was defined, the return will be the same that `call` would return.  
+`callback` receives the same arguments from the decorated function but it appends the exception raised to the keyword arguments (`kwargs`) as `exception`.  
+
+The value returned by callback will be returned from the decorated function.  
+
+If the callback is **not** a function, `Catch` will return it instead of calling it.  
 
 # usages
 Let's say that you just expect a function to try running something and if fails ignore and continue the program logic. In this case you just want to catch and ignore the exception:  
@@ -22,18 +23,18 @@ Let's say that you just expect a function to try running something and if fails 
 from la_catch import catch
 
 
-@catch(Exception)
+@Catch(Exception)
 def example():
     raise Exception("What a great day to raise an exception")
 ```
 
-Most of times you want at least to print the exception, in this case you can pass a function to be called. This function will receive the exception as the last argument for you use as you like.  
+Most of times you want to handle the exception, in this case you can pass a callback and this function will receive the exception as a keyword argument.  
 ```python
 from la_catch import catch
 
 
-def func(e):
-    print("Look what i catched mommy:", e)
+def func(exception):
+    print("Look what i catched mommy:", exception)
 
 
 @catch(Exception, func)
@@ -41,7 +42,7 @@ def example():
     raise Exception("You will never catch me alive")
 ```
 
-If all that you want is print the exception/traceback, i would recommend you passing `logging.exception` as `call`.  
+If all that you want is print the exception/traceback, i would recommend you passing `logging.exception` as callback.  
 ```python
 import logging
 from la_catch import catch
