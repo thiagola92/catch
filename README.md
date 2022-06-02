@@ -48,7 +48,7 @@ import logging
 from la_catch import catch
 
 
-@catch(Exception, logging.exception)
+@Catch(Exception, logging.exception)
 def example():
     raise Exception("I love to read tracebacks")
 ```

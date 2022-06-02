@@ -2,32 +2,6 @@ from asyncio import iscoroutinefunction
 from typing import Any, Awaitable, Callable
 
 
-def catch(
-    exceptions: Exception | tuple = Exception,
-    call: Callable = lambda *args, **kwargs: None,
-    ret: Any = ...,
-    include_args: bool = True,
-):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except exceptions as exception:
-                if include_args:
-                    call_return = call(*args, exception, **kwargs)
-                else:
-                    call_return = call(exception)
-
-                if ret is not Ellipsis:
-                    return ret
-
-                return call_return
-
-        return wrapper
-
-    return decorator
-
-
 class Catch:
     def __init__(
         self,
@@ -51,13 +25,10 @@ class Catch:
         if type not in self._exceptions:
             return False
 
-        if self._kwargs:
-            self._kwargs |= {"exception": value}
-        else:
-            self._args = self._args + (value,)
+        a, k = self._add_exception(self._args, self._kwargs, value)
 
         if callable(self._callback):
-            self._callback(*self._args, **self._kwargs)
+            self._callback(*a, **k)
 
         return True
 
@@ -66,8 +37,8 @@ class Catch:
             try:
                 return func(*args, **kwargs)
             except self._exceptions as e:
-                a = args + self._args
-                k = kwargs | self._kwargs | {"exception": e}
+                a, k = self._create_temporary_arguments(args, kwargs)
+                a, k = self._add_exception(a, k, e)
 
                 if callable(self._callback):
                     return self._callback(*a, **k)
@@ -77,8 +48,8 @@ class Catch:
             try:
                 return await func(*args, **kwargs)
             except self._exceptions as e:
-                a = args + self._args
-                k = kwargs | self._kwargs | {"exception": e}
+                a, k = self._create_temporary_arguments(args, kwargs)
+                a, k = self._add_exception(a, k, e)
 
                 if iscoroutinefunction(self._callback):
                     return await self._callback(*a, **k)
@@ -97,14 +68,38 @@ class Catch:
         if type not in self._exceptions:
             return False
 
-        if self._kwargs:
-            self._kwargs |= {"exception": value}
-        else:
-            self._args = self._args + (value,)
+        a, k = self._add_exception(self._args, self._kwargs, value)
 
         if callable(self._callback) and iscoroutinefunction(self._callback):
-            await self._callback(*self._args, **self._kwargs)
+            await self._callback(*a, **k)
         elif callable(self._callback):
-            self._callback(*self._args, **self._kwargs)
+            self._callback(*a, **k)
 
         return True
+
+    def _create_temporary_arguments(self, args, kwargs):
+        """
+        Create temporary arguments
+
+        Changing directly self._args or self._kwargs
+        would cause problems in subsequent calls from decorator,
+        so you need to create copies every time.
+        """
+
+        return (args + self._args, kwargs | self._kwargs)
+
+    def _add_exception(self, args, kwargs, exception):
+        """
+        Add exception to the arguments and return the new arguments to use
+
+        Normally the exception is passed through kwargs,
+        but i want to be usable with print() or logging.debug()
+        and passing as kwargs would generate problems in this cases.
+        """
+
+        if kwargs:
+            kwargs |= {"exception": exception}
+        else:
+            args = args + (exception,)
+
+        return args, kwargs

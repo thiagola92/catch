@@ -5,45 +5,33 @@ from unittest import TestCase
 from la_catch import Catch
 
 
-class TestDecoratorCallback(TestCase):
+class TestContextManager(TestCase):
     """Test if the callback is receiving the exception"""
 
     def setUp(self) -> None:
         self._exception = Exception("Exception")
         self._type_error = TypeError("Exception")
 
-    def test_decorator(self):
+    def test_context_manager(self):
         def test(e):
             assert e == self._exception
 
-        @Catch(Exception, test)
-        def func():
+        with Catch(Exception, test):
             raise self._exception
 
-        func()
-        func()
-
-    def test_decorator_2(self):
+    def test_context_manager_2(self):
         def test(e):
             assert e == self._exception
 
-        @Catch((Exception,), test)
-        def func():
+        with Catch((Exception,), test):
             raise self._exception
 
-        func()
-        func()
-
-    def test_decorator_3(self):
+    def test_context_manager_3(self):
         def test(e):
             assert e == self._type_error
 
-        @Catch((Exception, TypeError), test)
-        def func():
+        with Catch((Exception, TypeError), test):
             raise self._type_error
-
-        func()
-        func()
 
 
 if __name__ == "__main__":

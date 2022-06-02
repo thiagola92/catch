@@ -1,152 +1,24 @@
 import unittest
+from typing import Type
 from unittest import TestCase
-from unittest.mock import Mock
 
 from la_catch import Catch
 
 
-class CatchError(Exception):
-    pass
+class TestContextManager(TestCase):
+    """Test if exception is being ignored"""
 
+    def test_context_manager(self):
+        with Catch(Exception):
+            raise Exception()
 
-f = Mock()
-e = CatchError()
+    def test_context_manager_2(self):
+        with Catch((Exception,)):
+            raise Exception()
 
-
-class TestDecorator(TestCase):
-    """
-    Test catching and calling a function.
-    We go through every way the user can pass the arguments.
-    """
-
-    def setUp(self) -> None:
-        f.reset_mock(return_value=True, side_effect=True)
-
-        return super().setUp()
-
-    def test_call_1(self):
-        with Catch(CatchError, f):
-            self._call_1()
-
-        f.assert_called_once_with(self, exception=e)
-
-    def test_call_2(self):
-        with Catch(CatchError, f):
-            self._call_2(1)
-
-        f.assert_called_once_with(self, 1, exception=e)
-
-    def test_call_3(self):
-        with Catch(CatchError, f):
-            self._call_3(1, 2, 3)
-
-        f.assert_called_once_with(self, 1, 2, 3, exception=e)
-
-    def test_call_4(self):
-        with Catch(CatchError, f):
-            self._call_4(a=1)
-
-        f.assert_called_once_with(self, a=1, exception=e)
-
-    def test_call_5(self):
-        with Catch(CatchError, f):
-            self._call_5(a=1, b=2, c=3)
-
-        f.assert_called_once_with(self, a=1, b=2, c=3, exception=e)
-
-    def test_call_6(self):
-        with Catch(CatchError, f):
-            self._call_6(1, b=2)
-
-        f.assert_called_once_with(self, 1, b=2, exception=e)
-
-    def test_call_7(self):
-        with Catch(CatchError, f):
-            TestDecorator._call_7()
-
-        f.assert_called_once_with(exception=e)
-
-    def test_call_8(self):
-        with Catch(CatchError, f):
-            TestDecorator._call_8(1)
-
-        f.assert_called_once_with(1, exception=e)
-
-    def test_call_9(self):
-        with Catch(CatchError, f):
-            TestDecorator._call_9(a=1)
-
-        f.assert_called_once_with(a=1, exception=e)
-
-    def test_call_10(self):
-        with Catch(CatchError, f):
-            TestDecorator._call_10(a=1)
-
-        f.assert_called_once_with(a=1, exception=e)
-
-    def test_call_11(self):
-        with Catch(CatchError):
-            TestDecorator._call_11()
-
-    def test_call_12(self):
-        with Catch(CatchError):
-            TestDecorator._call_12(1)
-
-    def test_call_13(self):
-        with Catch(CatchError):
-            TestDecorator._call_13(a=1)
-
-    @Catch(CatchError, f)
-    def _call_1(self):
-        raise e
-
-    @Catch(CatchError, f)
-    def _call_2(self, a):
-        raise e
-
-    @Catch(CatchError, f)
-    def _call_3(self, a, b, c):
-        raise e
-
-    @Catch(CatchError, f)
-    def _call_4(self, a):
-        raise e
-
-    @Catch(CatchError, f)
-    def _call_5(self, a, b, c):
-        raise e
-
-    @Catch(CatchError, f)
-    def _call_6(self, a, b):
-        raise e
-
-    @Catch(CatchError, f)
-    def _call_7():
-        raise e
-
-    @Catch(CatchError, f)
-    def _call_8(a):
-        raise e
-
-    @Catch(CatchError, f)
-    def _call_9(a):
-        raise e
-
-    @Catch(CatchError, f)
-    def _call_10(a=1):
-        raise e
-
-    @Catch(CatchError)
-    def _call_11():
-        raise e
-
-    @Catch(CatchError)
-    def _call_12(a):
-        raise e
-
-    @Catch(CatchError)
-    def _call_13(a):
-        raise e
+    def test_context_manager_3(self):
+        with Catch((Exception, TypeError)):
+            raise TypeError()
 
 
 if __name__ == "__main__":
