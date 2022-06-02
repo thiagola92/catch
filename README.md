@@ -6,124 +6,86 @@ Decorator and context manager to catch exception(s) and call a function to handl
 
 # syntax
 ```python
-@Catch(exceptions, callback)
+Catch(exceptions, callback)
 ```
 `exceptions` - Exception or Tuple of exceptions to be captured  
-`callback` - function to be called in case of exceptions being raised  
+`callback` - function to be called in case of exceptions being raised **or** a return value to be returned in case of exceptions  
 
-`callback` receives the same arguments from the decorated function but it appends the exception raised to the keyword arguments (`kwargs`) as `exception`.  
+# basic
+`Catch` exist to replace `try except` for something that split the logic that deals with error from the main logic.   
 
-The value returned by callback will be returned from the decorated function.  
+Normally you would ignore an exception like this:
 
-If the callback is **not** a function, `Catch` will return it instead of calling it.  
-
-# usages
-Let's say that you just expect a function to try running something and if fails ignore and continue the program logic. In this case you just want to catch and ignore the exception:  
 ```python
-from la_catch import catch
-
-
-@Catch(Exception)
-def example():
-    raise Exception("What a great day to raise an exception")
+def func():
+    try:
+        raise TypeError()
+    except TypeError:
+        pass
 ```
 
-Most of times you want to handle the exception, in this case you can pass a callback and this function will receive the exception as a keyword argument.  
+But using `Catch` you could ignore using *context manager* or a *decorator*.  
+
 ```python
-from la_catch import catch
+from la_catch import Catch
 
-
-def func(exception):
-    print("Look what i catched mommy:", exception)
-
-
-@catch(Exception, func)
-def example():
-    raise Exception("You will never catch me alive")
+def func():
+    with Catch(TypeError)
+        raise TypeError()
 ```
 
-If all that you want is print the exception/traceback, i would recommend you passing `logging.exception` as callback.  
 ```python
-import logging
-from la_catch import catch
+from la_catch import Catch
 
-
-@Catch(Exception, logging.exception)
-def example():
-    raise Exception("I love to read tracebacks")
+@Catch(TypeError)
+def func():
+    raise TypeError()
 ```
 
-Let's say that you know how to deal with the raised problem, now you want the function to return the solution of the problem. You can make `call` return the expected resolution.  
+# callback
+Pass a callback to be invoked when the error occurs.  
+
 ```python
-from la_catch import catch
+def on_error(exception):
+    print("Let me try to solve the exception: ", exception)
 
-
-def func(e):
-    if isinstance(e, ZeroDivisionError):
-        print("You can't divide by zero you dummy")
-        return 0
-    return 1
-
-
-@catch(Exception, func)
-def example():
-    return 0/0
+with Catch(TypeError, on_error)
+    raise TypeError()
 ```
 
-Okay okay, but now you want to log the exception and return something so you program doesn't crash. Better than creating a function just for this two things is passing to `ret` the value to return in case of this exception.  
 ```python
-import logging
-from la_catch import catch
+def on_error(exception):
+    print("Let me try to solve the exception: ", exception)
 
+@Catch(TypeError, on_error)
+def func():
+    raise TypeError()
 
-@catch(Exception, logging.exception, 0)
-def example():
-    return 0/0
+func()
 ```
 
-Of course that i am using `Exception` everywhere but you could use other exception or multiple exceptions!  
+# callback arguments
+Any extra argument giving during initialization will be passed to the callback when the erro occurs.  
+
 ```python
-from la_catch import catch
+def on_error(name, exception):
+    print(f"Hi {name}! Look what i found:", exception)
 
-
-@catch((ZeroDivisionError, OverflowError, FloatingPointError), logging.exception, 0)
-def example():
-    return 0/0
+with Catch(TypeError, on_error, "alice")
+    raise TypeError()
 ```
 
-If you want to make different things to different exceptions just decorate with one more catch.  
 ```python
-import logging
-from la_catch import catch
+def on_error(name, exception):
+    print(f"Hi {name}! Look what i found:", exception)
 
+@Catch(TypeError, on_error, "alice")
+def func():
+    raise TypeError()
 
-@catch(OverflowError, logging.exception, None)
-@catch(ZeroDivisionError, logging.exception, 0)
-def example():
-    return 0/0
+func()
 ```
 
-Just remember that exception is always pass as the last argument from `call` (not counting **kwargs).  
-```python
-from la_catch import catch
+Exception will come as keyword argument or as last argument if there is no keyword arguments.  
 
-
-def func(a, b, e):
-    print("I have zero tolerance for this error... got it?")
-
-
-@catch(ZeroDivisionError, func, 0)
-def example(a, b):
-    return a/b
-```
-
-The default behaviour is including the function arguments in your `call`, but you can choose not to send them. For example, you don't need this extra arguments in the `logging.exception`.  
-```python
-import logging
-from la_catch import catch
-
-
-@catch(Exception, logging.exception, include_args=False)
-def example(a, b, c, d=1, e=2, f=3):
-    raise Exception("You are a picky eater")
-```
+**Recomendation**: If always assume that exception will come as keyword argument called `exception` you will be fine.  

@@ -1,5 +1,4 @@
 import unittest
-from typing import Type
 from unittest import TestCase
 
 from la_catch import Catch
