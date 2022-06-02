@@ -12,7 +12,7 @@ Catch(exceptions, callback)
 `callback` - function to be called in case of exceptions being raised **or** a return value to be returned in case of exceptions  
 
 # basic
-`Catch` exist to replace `try except` for something that split the logic that deals with error from the main logic.   
+`Catch` exist to create a reaction to a exception, the idea is to split the logic that deals with error from the main logic.   
 
 Normally you would ignore an exception like this:
 
@@ -88,4 +88,25 @@ func()
 
 Exception will come as keyword argument or as last argument if there is no keyword arguments.  
 
-**Recomendation**: If always assume that exception will come as keyword argument called `exception` you will be fine.  
+**Recomendation**: If you always assume that exception will come as keyword argument called `exception` you will be fine.  
+
+# decorator
+Decorators are more complex for two reasons:
+- Decorated function still needs to return a value
+- Decorated function will receive the functions arguments
+
+As said, the callback will receive the same values that decorated function received.  
+
+```python
+def on_error(value, exception):
+    print("Your input value is invalid, value:", value)
+    print("We will be giving 1 to you")
+    return 1
+
+@Catch(ValueError, on_error)
+def get_money(value):
+    return int(value) + 1
+
+money = get_money("i want my money")
+print("This is how much money you will get:", money)
+```
