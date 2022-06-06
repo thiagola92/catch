@@ -76,42 +76,9 @@ class TestREADME(TestCase):
         def on_error(message, exception):
             print(message, exception)
 
-        @Catch(TypeError, callback=on_error, message="WARNING:")
-        def func():
-            raise TypeError("example")
-
-        func()
-
-        #######################################
-
-        def on_error(message, exception):
-            print(message, exception)
-
         @Catch(TypeError, callback=on_error)
         def func(message="WARNING:"):
             raise TypeError("example")
-
-        func()
-
-        #######################################
-
-        def on_error(message, exception):
-            print(message, exception)  # WARNING: example
-
-        @Catch(TypeError, callback=on_error, message="warning:")
-        def func(message="WARNING:"):
-            raise TypeError("example")
-
-        func()
-
-        #######################################
-
-        def on_error(exception):
-            print(exception)  # not fake
-
-        @Catch(TypeError, callback=on_error, exception="FAKE")
-        def func(exception="fake"):
-            raise TypeError("not fake")
 
         func()
 

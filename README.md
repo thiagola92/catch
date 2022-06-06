@@ -6,11 +6,17 @@ Decorator and context manager to catch exception(s) and call a function to handl
 
 # syntax
 ```python
-Catch(exceptions, callback)
+Catch(exceptions, callback, *args, **kwargs)
 ```
 `exceptions` - Exception or Tuple of exceptions to be captured  
 `callback` - function to be called in case of exceptions being raised **or** a return value to be returned in case of exceptions  
-`**kwargs` - Any extra keywords are passed to callback
+`*args` - Any extra arguments are passed to **context manager** callback  
+`**kwargs` - Any extra keywords are passed to **context manager** callback  
+
+# usage
+There is two ways to use `catch`:
+- Context Manager
+- Decorator
 
 # context manager
 Catch exception and do nothing:  
@@ -87,18 +93,6 @@ def func():
     raise TypeError("example")
 ```
 
-Catch exception and call callback passing keywords arguments and exception:   
-```python
-from la_catch import Catch
-
-def on_error(message, exception):
-    print(message, exception)
-
-@Catch(TypeError, callback=on_error, message="WARNING:")
-def func():
-    raise TypeError("example")
-```
-
 Catch exception and call callback passing decorated function arguments and exception:   
 ```python
 from la_catch import Catch
@@ -109,30 +103,6 @@ def on_error(message, exception):
 @Catch(TypeError, callback=on_error)
 def func(message="WARNING:"):
     raise TypeError("example")
-```
-
-Function arguments have priority over initialization arguments:   
-```python
-from la_catch import Catch
-
-def on_error(message, exception):
-    print(message, exception) # WARNING: example
-
-@Catch(TypeError, callback=on_error, message="warning:")
-def func(message="WARNING:"):
-    raise TypeError("example")
-```
-
-Exception have priority over function arguments and initialization arguments:   
-```python
-from la_catch import Catch
-
-def on_error(exception):
-    print(exception) # not fake
-
-@Catch(TypeError, callback=on_error, exception="FAKE")
-def func(exception="fake"):
-    raise TypeError("not fake")
 ```
 
 Chain catchs:  
