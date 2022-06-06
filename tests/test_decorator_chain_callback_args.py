@@ -24,11 +24,11 @@ class TestDecorator(TestCase):
 
         @Catch(FileNotFoundError, callback=on_file_error)
         @Catch(TypeError, callback=on_type_error)
-        def func(message=m):
+        def func(message):
             raise self._type_error
 
-        func()
-        func()
+        func(m)
+        func(m)
 
     def test_decorator_2(self):
         m = "Unknown fail"
@@ -43,11 +43,11 @@ class TestDecorator(TestCase):
 
         @Catch(FileNotFoundError, callback=on_file_error)
         @Catch(TypeError, callback=on_type_error)
-        def func(message=m):
+        def func(message):
             raise self._file_not_found
 
-        func()
-        func()
+        func(m)
+        func(m)
 
 
 if __name__ == "__main__":

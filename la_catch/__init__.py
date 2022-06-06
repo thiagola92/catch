@@ -1,5 +1,5 @@
 from asyncio import iscoroutinefunction
-from inspect import signature
+from inspect import Signature, signature
 from typing import Any, Awaitable, Callable
 
 
@@ -8,6 +8,7 @@ class Catch:
         self,
         exceptions: Exception | tuple[Exception] = Exception,
         callback: Callable | Awaitable | Any = None,
+        *args,
         **kwargs,
     ):
         if not isinstance(exceptions, tuple):
@@ -15,6 +16,7 @@ class Catch:
 
         self._exceptions = exceptions
         self._callback = callback
+        self._args = args
         self._kwargs = kwargs
 
     def __enter__(self):
@@ -24,33 +26,45 @@ class Catch:
         if type not in self._exceptions:
             return False
 
-        k = self._kwargs | {"exception": value}
+        self._kwargs |= {"exception": value}
 
         if callable(self._callback):
-            self._callback(**k)
+            self._callback(*self._args, **self._kwargs)
 
         return True
 
     def __call__(self, func: Callable) -> Callable:
         def wrapper(*args, **kwargs):
+            sign = signature(func)
+            bound_arguments = sign.bind(*args, **kwargs)
+            bound_arguments.apply_defaults()
+            args = bound_arguments.args
+            kwargs = bound_arguments.kwargs
+
             try:
                 return func(*args, **kwargs)
             except self._exceptions as e:
                 if callable(self._callback):
-                    k = self._get_decorator_arguments(func, args, kwargs, e)
-                    return self._callback(**k)
+                    kwargs |= {"exception": e}
+                    return self._callback(*args, **kwargs)
                 return self._callback
 
         async def awrapper(*args, **kwargs):
+            sign = signature(func)
+            bound_arguments = sign.bind(*args, **kwargs)
+            bound_arguments.apply_defaults()
+            args = bound_arguments.args
+            kwargs = bound_arguments.kwargs
+
             try:
                 return await func(*args, **kwargs)
             except self._exceptions as e:
                 if iscoroutinefunction(self._callback):
-                    k = self._get_decorator_arguments(func, args, kwargs, e)
-                    return await self._callback(**k)
+                    kwargs |= {"exception": e}
+                    return await self._callback(*args, **kwargs)
                 elif callable(self._callback):
-                    k = self._get_decorator_arguments(func, args, kwargs, e)
-                    return self._callback(**k)
+                    kwargs |= {"exception": e}
+                    return self._callback(*args, **kwargs)
                 return self._callback
 
         if iscoroutinefunction(func):
@@ -64,38 +78,11 @@ class Catch:
         if type not in self._exceptions:
             return False
 
-        k = self._kwargs | {"exception": value}
+        self._kwargs |= {"exception": value}
 
         if callable(self._callback) and iscoroutinefunction(self._callback):
-            await self._callback(**k)
+            await self._callback(*self._args, **self._kwargs)
         elif callable(self._callback):
-            self._callback(**k)
+            self._callback(*self._args, **self._kwargs)
 
         return True
-
-    def _get_decorator_arguments(
-        self, func: Callable, args: tuple, kwargs: dict, exception: Exception
-    ) -> dict[str, Any]:
-        """
-        Get the arguments for the decorator.
-
-        Keyword priority:
-            1. Keyword 'exception'
-            2. Arguments from decorated function
-            3. Initialization keywords arguments
-        """
-
-        # Replicate the arguments received by decorated function
-        sign = signature(func)
-        bound_arguments = sign.bind(*args, **kwargs)
-        bound_arguments.apply_defaults()
-        arguments = bound_arguments.arguments
-
-        # Apply priority
-        arguments = self._kwargs | arguments | {"exception": exception}
-
-        # Remove arguments that are not in callback
-        sign = signature(self._callback)
-        arguments = {a: arguments[a] for a in arguments if a in sign.parameters}
-
-        return arguments
