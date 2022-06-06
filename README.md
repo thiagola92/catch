@@ -10,103 +10,127 @@ Catch(exceptions, callback)
 ```
 `exceptions` - Exception or Tuple of exceptions to be captured  
 `callback` - function to be called in case of exceptions being raised **or** a return value to be returned in case of exceptions  
+`**kwargs` - Any extra keywords are passed to callback
 
-# basic
-`Catch` exist to create a reaction to a exception, the idea is to split the logic that deals with error from the main logic.   
-
-Normally you would ignore an exception like this:
-
-```python
-def func():
-    try:
-        raise TypeError()
-    except TypeError:
-        pass
-```
-
-But using `Catch` you could ignore using *context manager* or a *decorator*.  
-
+# context manager
+Catch exception and do nothing:  
 ```python
 from la_catch import Catch
 
 def func():
-    with Catch(TypeError)
-        raise TypeError()
+    with Catch(TypeError):
+        raise TypeError("example")
 ```
 
+Catch exception and call callback passing exception:  
+```python
+from la_catch import Catch
+
+def on_error(exception):
+    print(exception)
+
+def func():
+    with Catch(TypeError, callback=on_error):
+        raise TypeError("example")
+```
+
+Catch exception and call callback passing keywords arguments and exception:  
+```python
+from la_catch import Catch
+
+def on_error(message, exception):
+    print(message, exception)
+
+def func():
+    with Catch(TypeError, callback=on_error, message="WARNING:"):
+        raise TypeError("example")
+```
+
+Catch multiple exceptions:  
+```python
+from la_catch import Catch
+
+def func():
+    with Catch((TypeError, FileNotFoundError)):
+        raise FileNotFoundError("example")
+```
+
+
+# decorator
+Catch exception and return `None`:  
 ```python
 from la_catch import Catch
 
 @Catch(TypeError)
 def func():
-    raise TypeError()
+    raise TypeError("example")
 ```
 
-# callback
-Pass a callback to be invoked when the error occurs.  
-
+Catch exception and return a value:   
 ```python
-def on_error(exception):
-    print("Let me try to solve the exception: ", exception)
+from la_catch import Catch
 
-with Catch(TypeError, on_error)
-    raise TypeError()
-```
-
-```python
-def on_error(exception):
-    print("Let me try to solve the exception: ", exception)
-
-@Catch(TypeError, on_error)
+@Catch(TypeError, callback=10)
 def func():
-    raise TypeError()
-
-func()
+    raise TypeError("example")
 ```
 
-# callback arguments
-Any extra argument giving during initialization will be passed to the callback when the erro occurs.  
-
+Catch exception and call callback passing exception:   
 ```python
-def on_error(name, exception):
-    print(f"Hi {name}! Look what i found:", exception)
+from la_catch import Catch
 
-with Catch(TypeError, on_error, "alice")
-    raise TypeError()
-```
+def on_error(exception):
+    print(exception)
 
-```python
-def on_error(name, exception):
-    print(f"Hi {name}! Look what i found:", exception)
-
-@Catch(TypeError, on_error, "alice")
+@Catch(TypeError, callback=on_error)
 def func():
-    raise TypeError()
-
-func()
+    raise TypeError("example")
 ```
 
-Exception will come as keyword argument or as last argument if there is no keyword arguments.  
-
-**Recomendation**: If you always assume that exception will come as keyword argument called `exception` you will be fine.  
-
-# decorator
-Decorators are more complex for two reasons:
-- Decorated function still needs to return a value
-- Decorated function will receive the functions arguments
-
-As said, the callback will receive the same values that decorated function received.  
-
+Catch exception and call callback passing keywords arguments and exception:   
 ```python
-def on_error(value, exception):
-    print("Your input value is invalid, value:", value)
-    print("We will be giving 1 to you")
-    return 1
+from la_catch import Catch
 
-@Catch(ValueError, on_error)
-def get_money(value):
-    return int(value) + 1
+def on_error(message, exception):
+    print(message, exception)
 
-money = get_money("i want my money")
-print("This is how much money you will get:", money)
+@Catch(TypeError, callback=on_error, message="WARNING:")
+def func():
+    raise TypeError("example")
+```
+
+Catch exception and call callback passing decorated function arguments and exception:   
+```python
+from la_catch import Catch
+
+def on_error(message, exception):
+    print(message, exception)
+
+@Catch(TypeError, callback=on_error)
+def func(message="WARNING:"):
+    raise TypeError("example")
+```
+
+Function arguments have priority over initialization arguments:   
+```python
+from la_catch import Catch
+
+def on_error(message, exception):
+    print(message, exception) # WARNING: example
+
+@Catch(TypeError, callback=on_error, message="warning:")
+def func(message="WARNING:"):
+    raise TypeError("example")
+```
+
+Exception have priority over function arguments and initialization arguments:   
+```python
+from la_catch import Catch
+
+def on_error(exception):
+    print(exception) # not fake
+
+@Catch(TypeError, callback=on_error, exception="FAKE")
+def func(exception="fake"):
+    raise TypeError("not fake")
 ```

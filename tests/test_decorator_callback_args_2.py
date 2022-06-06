@@ -4,86 +4,59 @@ from unittest import TestCase
 from la_catch import Catch
 
 
-class TestContextManagerCallbackArgs(TestCase):
-    """Test if the arguments and exception are being pass to callback"""
+class TestDecoratorCallbackArgs(TestCase):
+    """
+    Test if arguments from initilization, function and the exception
+    are being pass to callback
+    """
 
     def setUp(self) -> None:
         self._exception = Exception("Exception")
 
-    def test_context_manager(self):
-        def test(a, b, c, d, e):
-            assert a == 3
-            assert b == 4
-            assert c == 1
-            assert d == 2
-            assert e == self._exception
-
-        @Catch(Exception, test, 1, 2)
-        def func(a, b):
-            raise self._exception
-
-        func(3, 4)
-        func(3, 4)
-
-    def test_context_manager_2(self):
+    def test_decorator_1(self):
         def test(a, b, c, d, exception):
-            assert a == 3
-            assert b == 4
-            assert c == 1
-            assert d == 2
+            assert a == 1
+            assert b == 2
+            assert c == 3
+            assert d == 4
             assert exception == self._exception
 
-        @Catch(Exception, test, 1, d=2)
-        def func(a, b):
+        @Catch(Exception, test, a=1, b=2)
+        def func(c, d):
             raise self._exception
 
         func(3, 4)
         func(3, 4)
 
-    def test_context_manager_3(self):
+    def test_decorator_2(self):
         def test(a, b, c, d, exception):
-            assert a == 3
-            assert b == 4
-            assert c == 1
-            assert d == 2
+            assert a == 1
+            assert b == 2
+            assert c == 3
+            assert d == 4
             assert exception == self._exception
 
-        @Catch(Exception, test, c=1, d=2)
-        def func(a, b):
+        @Catch(Exception, test, a=1, b=2)
+        def func(c, d):
             raise self._exception
 
-        func(3, 4)
-        func(3, 4)
+        func(3, d=4)
+        func(3, d=4)
 
-    def test_context_manager_4(self):
+    def test_decorator_3(self):
         def test(a, b, c, d, exception):
-            assert a == 3
-            assert b == 4
-            assert c == 1
-            assert d == 2
+            assert a == 1
+            assert b == 2
+            assert c == 3
+            assert d == 4
             assert exception == self._exception
 
-        @Catch(Exception, test, c=1, d=2)
-        def func(a, b):
+        @Catch(Exception, test, a=1, b=2)
+        def func(c, d):
             raise self._exception
 
-        func(3, b=4)
-        func(3, b=4)
-
-    def test_context_manager_5(self):
-        def test(a, b, c, d, exception):
-            assert a == 3
-            assert b == 4
-            assert c == 1
-            assert d == 2
-            assert exception == self._exception
-
-        @Catch(Exception, test, c=1, d=2)
-        def func(a, b):
-            raise self._exception
-
-        func(a=3, b=4)
-        func(a=3, b=4)
+        func(c=3, d=4)
+        func(c=3, d=4)
 
 
 if __name__ == "__main__":

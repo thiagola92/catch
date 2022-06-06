@@ -12,8 +12,8 @@ class TestDecoratorCallback(TestCase):
         self._type_error = TypeError("Exception")
 
     def test_decorator(self):
-        def test(e):
-            assert e == self._exception
+        def test(exception):
+            assert exception == self._exception
 
         @Catch(Exception, test)
         def func():
@@ -23,8 +23,8 @@ class TestDecoratorCallback(TestCase):
         func()
 
     def test_decorator_2(self):
-        def test(e):
-            assert e == self._exception
+        def test(exception):
+            assert exception == self._exception
 
         @Catch((Exception,), test)
         def func():
@@ -34,8 +34,8 @@ class TestDecoratorCallback(TestCase):
         func()
 
     def test_decorator_3(self):
-        def test(e):
-            assert e == self._type_error
+        def test(exception):
+            assert exception == self._type_error
 
         @Catch((Exception, TypeError), test)
         def func():
