@@ -35,11 +35,7 @@ class Catch:
 
     def __call__(self, func: Callable) -> Callable:
         def wrapper(*args, **kwargs):
-            sign = signature(func)
-            bound_arguments = sign.bind(*args, **kwargs)
-            bound_arguments.apply_defaults()
-            args = bound_arguments.args
-            kwargs = bound_arguments.kwargs
+            args, kwargs = self._get_arguments(func, args, kwargs)
 
             try:
                 return func(*args, **kwargs)
@@ -50,11 +46,7 @@ class Catch:
                 return self._callback
 
         async def awrapper(*args, **kwargs):
-            sign = signature(func)
-            bound_arguments = sign.bind(*args, **kwargs)
-            bound_arguments.apply_defaults()
-            args = bound_arguments.args
-            kwargs = bound_arguments.kwargs
+            args, kwargs = self._get_arguments(func, args, kwargs)
 
             try:
                 return await func(*args, **kwargs)
@@ -86,3 +78,16 @@ class Catch:
             self._callback(*self._args, **self._kwargs)
 
         return True
+
+    def _get_arguments(
+        self, func: Callable, args: tuple, kwargs: dict
+    ) -> tuple[tuple, dict]:
+        """Get function arguments, including default values"""
+
+        sign = signature(func)
+        bound_arguments = sign.bind(*args, **kwargs)
+        bound_arguments.apply_defaults()
+        args = bound_arguments.args
+        kwargs = bound_arguments.kwargs
+
+        return args, kwargs
