@@ -134,3 +134,20 @@ def on_error(exception):
 def func(exception="fake"):
     raise TypeError("not fake")
 ```
+
+Chain catchs:  
+```python
+from la_catch import Catch
+
+def on_file_not_found_error(exception):
+    print(exception)
+
+def on_typerror(exception):
+    print(exception)
+
+@Catch(FileNotFoundError, callback=on_file_not_found_error)
+@Catch(TypeError, callback=on_typerror)
+def func():
+    raise FileNotFoundError("example")
+    raise TypeError("example")
+```

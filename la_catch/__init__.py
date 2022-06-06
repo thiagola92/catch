@@ -36,9 +36,8 @@ class Catch:
             try:
                 return func(*args, **kwargs)
             except self._exceptions as e:
-                k = self._get_decorator_arguments(func, args, kwargs, e)
-
                 if callable(self._callback):
+                    k = self._get_decorator_arguments(func, args, kwargs, e)
                     return self._callback(**k)
                 return self._callback
 
@@ -46,11 +45,11 @@ class Catch:
             try:
                 return await func(*args, **kwargs)
             except self._exceptions as e:
-                k = self._get_decorator_arguments(func, args, kwargs, e)
-
                 if iscoroutinefunction(self._callback):
+                    k = self._get_decorator_arguments(func, args, kwargs, e)
                     return await self._callback(**k)
                 elif callable(self._callback):
+                    k = self._get_decorator_arguments(func, args, kwargs, e)
                     return self._callback(**k)
                 return self._callback
 
@@ -94,5 +93,9 @@ class Catch:
 
         # Apply priority
         arguments = self._kwargs | arguments | {"exception": exception}
+
+        # Remove arguments that are not in callback
+        sign = signature(self._callback)
+        arguments = {a: arguments[a] for a in arguments if a in sign.parameters}
 
         return arguments

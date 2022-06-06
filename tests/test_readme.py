@@ -115,6 +115,24 @@ class TestREADME(TestCase):
 
         func()
 
+        #######################################
+
+        def on_file_not_found_error(exception):
+            print(exception)
+
+        def on_typerror(exception):
+            print(exception)
+
+        @Catch(FileNotFoundError, callback=on_file_not_found_error)
+        @Catch(TypeError, callback=on_typerror)
+        def func():
+            raise TypeError("example")
+            raise FileNotFoundError("example")
+
+        func()
+
+        #######################################
+
 
 if __name__ == "__main__":
     unittest.main()
