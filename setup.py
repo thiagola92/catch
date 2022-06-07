@@ -1,11 +1,12 @@
 from pathlib import Path
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 long_description = Path("README.md").read_text()
 
 setup(
     name="la-catch",
-    version="0.0.3",
+    version="0.0.4",
     description="Decorator to map exception to functions",
     long_description=long_description,
     long_description_content_type="text/markdown",
