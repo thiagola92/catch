@@ -20,7 +20,7 @@ class Catch:
         self._args = args
         self._kwargs = kwargs
 
-        self.ret = None
+        self.callback_return = None
 
     def __enter__(self):
         return self
@@ -32,9 +32,9 @@ class Catch:
         self._kwargs |= {"exception": value}
 
         if callable(self._callback):
-            self.ret = self._callback(*self._args, **self._kwargs)
+            self.callback_return = self._callback(*self._args, **self._kwargs)
         else:
-            self.ret = self._callback
+            self.callback_return = self._callback
 
         return True
 
@@ -42,24 +42,20 @@ class Catch:
         def wrapper(*args, **kwargs):
             args, kwargs = get_arguments(func=func, args=args, kwargs=kwargs)
 
-            a = args + self._args
-            k = kwargs | self._kwargs
-
-            with self.__class__(self._exceptions, self._callback, *a, **k) as catch:
+            with self.__class__(
+                self._exceptions, self._callback, *args, **kwargs
+            ) as catch:
                 return func(*args, **kwargs)
-            return catch.ret
+            return catch.callback_return
 
         async def awrapper(*args, **kwargs):
             args, kwargs = get_arguments(func=func, args=args, kwargs=kwargs)
 
-            a = args + self._args
-            k = kwargs | self._kwargs
-
             async with self.__class__(
-                self._exceptions, self._callback, *a, **k
+                self._exceptions, self._callback, *args, **kwargs
             ) as catch:
                 return await func(*args, **kwargs)
-            return catch.ret
+            return catch.callback_return
 
         if iscoroutinefunction(func):
             return awrapper
@@ -75,8 +71,8 @@ class Catch:
         self._kwargs |= {"exception": value}
 
         if callable(self._callback) and iscoroutinefunction(self._callback):
-            self.ret = await self._callback(*self._args, **self._kwargs)
+            self.callback_return = await self._callback(*self._args, **self._kwargs)
         elif callable(self._callback):
-            self.ret = self._callback(*self._args, **self._kwargs)
+            self.callback_return = self._callback(*self._args, **self._kwargs)
 
         return True

@@ -63,6 +63,8 @@ def func():
 
 
 # decorator
+Make sure that the callback signature identical to the function signature.  
+
 Catch exception and return `None`:  
 ```python
 from la_catch import Catch
@@ -121,3 +123,10 @@ def func():
     raise FileNotFoundError("example")
     raise TypeError("example")
 ```
+
+# notes
+Initialization arguments are used by context manager and ignored by decorators, because:  
+- Would have to decide a priority between intialization arguments and function arguments  
+- Passing default values to callback would need me to know the function arguments  
+    - When chaining decorators, wasn't possible to discover the function parameters because decorators would give `(*args, **kwargs)`  
+    - When chaining decorators, wasn't possible to discover the default values because decorators would give `(*args, **kwargs)`  

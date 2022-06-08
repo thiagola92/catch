@@ -4,7 +4,7 @@ from unittest import TestCase
 from la_catch import Catch
 
 
-class TestDecoratorCallback(TestCase):
+class TestDecoratorCallbackArgs(TestCase):
     """Test if the callback is receiving the exception"""
 
     def setUp(self) -> None:

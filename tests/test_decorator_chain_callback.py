@@ -4,7 +4,7 @@ from unittest import TestCase
 from la_catch import Catch
 
 
-class TestDecorator(TestCase):
+class TestDecoratorChainCallback(TestCase):
     """Test if is possible to chain Catchs"""
 
     def setUp(self) -> None:
