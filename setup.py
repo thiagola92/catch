@@ -6,7 +6,7 @@ long_description = Path("README.md").read_text()
 
 setup(
     name="la-catch",
-    version="0.0.4",
+    version="0.0.5",
     description="Decorator to map exception to functions",
     long_description=long_description,
     long_description_content_type="text/markdown",
