@@ -86,9 +86,10 @@ class Catch:
         Get function arguments, including default values
 
         It's important to generate the default values
-        because you can't to that in the callback function
-        if the user didn't inserted the default value in the
-        function declaration.
+        before passing to callback function.
+        Because you can't extract the default values from
+        the callback (only if the user did declare the
+        default values in the callback).
         """
 
         sign = signature(func)
