@@ -39,18 +39,18 @@ class TestDecoratorCallbackArgs(TestCase):
         func(1, b=2)
         func(1, b=2)
 
-    # def test_decorator_3(self):
-    #     def test(a, b, exception):
-    #         assert a == 1
-    #         assert b == 2
-    #         assert exception == self._exception
+    def test_decorator_3(self):
+        def test(a, b, exception):
+            assert a == 1
+            assert b == 2
+            assert exception == self._exception
 
-    #     @Catch(Exception, test)
-    #     def func(a, b):
-    #         raise self._exception
+        @Catch(Exception, test)
+        def func(a, b):
+            raise self._exception
 
-    #     func(a=1, b=2)
-    #     func(a=1, b=2)
+        func(a=1, b=2)
+        func(a=1, b=2)
 
 
 if __name__ == "__main__":

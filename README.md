@@ -121,10 +121,3 @@ def func():
     raise FileNotFoundError("example")
     raise TypeError("example")
 ```
-
-# notes
-Initialization arguments are used by context manager and ignored by decorators, because:  
-- Had to decide a priority between intialization arguments and function arguments  
-- Passing default values to callback would need me to know the function arguments  
-- When chaining decorators, wasn't possible to discover the function parameters because decorators would give `(*args, **kwargs)`  
-- When chaining decorators, wasn't possible to discover the default values because decorators would give `(*args, **kwargs)`  

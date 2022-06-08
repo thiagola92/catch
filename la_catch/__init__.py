@@ -1,6 +1,7 @@
 from asyncio import iscoroutinefunction
-from inspect import Signature, signature
 from typing import Any, Awaitable, Callable
+
+from la_catch.utility import get_arguments
 
 
 class Catch:
@@ -19,6 +20,8 @@ class Catch:
         self._args = args
         self._kwargs = kwargs
 
+        self.ret = None
+
     def __enter__(self):
         return self
 
@@ -29,35 +32,34 @@ class Catch:
         self._kwargs |= {"exception": value}
 
         if callable(self._callback):
-            self._callback(*self._args, **self._kwargs)
+            self.ret = self._callback(*self._args, **self._kwargs)
+        else:
+            self.ret = self._callback
 
         return True
 
     def __call__(self, func: Callable) -> Callable:
         def wrapper(*args, **kwargs):
-            args, kwargs = self._get_arguments(func, args, kwargs)
+            args, kwargs = get_arguments(func=func, args=args, kwargs=kwargs)
 
-            try:
+            a = args + self._args
+            k = kwargs | self._kwargs
+
+            with self.__class__(self._exceptions, self._callback, *a, **k) as catch:
                 return func(*args, **kwargs)
-            except self._exceptions as e:
-                if callable(self._callback):
-                    kwargs |= {"exception": e}
-                    return self._callback(*args, **kwargs)
-                return self._callback
+            return catch.ret
 
         async def awrapper(*args, **kwargs):
-            args, kwargs = self._get_arguments(func, args, kwargs)
+            args, kwargs = get_arguments(func=func, args=args, kwargs=kwargs)
 
-            try:
+            a = args + self._args
+            k = kwargs | self._kwargs
+
+            async with self.__class__(
+                self._exceptions, self._callback, *a, **k
+            ) as catch:
                 return await func(*args, **kwargs)
-            except self._exceptions as e:
-                if iscoroutinefunction(self._callback):
-                    kwargs |= {"exception": e}
-                    return await self._callback(*args, **kwargs)
-                elif callable(self._callback):
-                    kwargs |= {"exception": e}
-                    return self._callback(*args, **kwargs)
-                return self._callback
+            return catch.ret
 
         if iscoroutinefunction(func):
             return awrapper
@@ -73,29 +75,8 @@ class Catch:
         self._kwargs |= {"exception": value}
 
         if callable(self._callback) and iscoroutinefunction(self._callback):
-            await self._callback(*self._args, **self._kwargs)
+            self.ret = await self._callback(*self._args, **self._kwargs)
         elif callable(self._callback):
-            self._callback(*self._args, **self._kwargs)
+            self.ret = self._callback(*self._args, **self._kwargs)
 
         return True
-
-    def _get_arguments(
-        self, func: Callable, args: tuple, kwargs: dict
-    ) -> tuple[tuple, dict]:
-        """
-        Get function arguments, including default values
-
-        It's important to generate the default values
-        before passing to callback function.
-        Because you can't extract the default values from
-        the callback (only if the user did declare the
-        default values in the callback).
-        """
-
-        sign = signature(func)
-        bound_arguments = sign.bind(*args, **kwargs)
-        bound_arguments.apply_defaults()
-        args = bound_arguments.args
-        kwargs = bound_arguments.kwargs
-
-        return args, kwargs
