@@ -82,7 +82,14 @@ class Catch:
     def _get_arguments(
         self, func: Callable, args: tuple, kwargs: dict
     ) -> tuple[tuple, dict]:
-        """Get function arguments, including default values"""
+        """
+        Get function arguments, including default values
+
+        It's important to generate the default values
+        because you can't to that in the callback function
+        if the user didn't inserted the default value in the
+        function declaration.
+        """
 
         sign = signature(func)
         bound_arguments = sign.bind(*args, **kwargs)
