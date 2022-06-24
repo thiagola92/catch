@@ -20,7 +20,7 @@ class TestREADME(TestCase):
             print(exception)
 
         def func():
-            with Catch(TypeError, callback=on_error):
+            with Catch(TypeError, on_error):
                 raise TypeError("example")
 
         func()
@@ -31,7 +31,7 @@ class TestREADME(TestCase):
             print(message, exception)
 
         def func():
-            with Catch(TypeError, callback=on_error, message="WARNING:"):
+            with Catch(TypeError, on_error, "WARNING:"):
                 raise TypeError("example")
 
         func()
@@ -54,7 +54,7 @@ class TestREADME(TestCase):
 
         #######################################
 
-        @Catch(TypeError, callback=10)
+        @Catch(TypeError, 10)
         def func():
             raise TypeError("example")
 
@@ -65,7 +65,7 @@ class TestREADME(TestCase):
         def on_error(exception):
             print(exception)
 
-        @Catch(TypeError, callback=on_error)
+        @Catch(TypeError, on_error)
         def func():
             raise TypeError("example")
 
@@ -76,7 +76,7 @@ class TestREADME(TestCase):
         def on_error(message, exception):
             print(message, exception)
 
-        @Catch(TypeError, callback=on_error)
+        @Catch(TypeError, on_error)
         def func(message="WARNING:"):
             raise TypeError("example")
 
@@ -90,8 +90,8 @@ class TestREADME(TestCase):
         def on_typerror(exception):
             print(exception)
 
-        @Catch(FileNotFoundError, callback=on_file_not_found_error)
-        @Catch(TypeError, callback=on_typerror)
+        @Catch(FileNotFoundError, on_file_not_found_error)
+        @Catch(TypeError, on_typerror)
         def func():
             raise TypeError("example")
             raise FileNotFoundError("example")
