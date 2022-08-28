@@ -46,7 +46,7 @@ class Catch:
                 self._exceptions, self._callback, *args, **kwargs
             ) as catch:
                 return func(*args, **kwargs)
-            return catch.callback_return
+            return catch.callback_return  # when context manager above raise exception
 
         async def awrapper(*args, **kwargs):
             args, kwargs = get_arguments(func=func, args=args, kwargs=kwargs)
@@ -55,7 +55,7 @@ class Catch:
                 self._exceptions, self._callback, *args, **kwargs
             ) as catch:
                 return await func(*args, **kwargs)
-            return catch.callback_return
+            return catch.callback_return  # when context manager above raise exception
 
         if iscoroutinefunction(func):
             return awrapper
