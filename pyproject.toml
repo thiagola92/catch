@@ -19,9 +19,18 @@ license = {text = "MIT"}
 [project.urls]
 repository = "https://github.com/thiagola92/la-catch"
 
+[tool.pdm]
+
+[tool.pdm.scripts]
+tests = "python -m unittest discover -v -f -s tests"
+sort = "python -m isort -v --ac ."
+
+[tool.pdm.dev-dependencies]
+lint = [
+    "black",
+    "isort"
+]
+
 [build-system]
 requires = ["pdm-pep517>=1.0.0"]
 build-backend = "pdm.pep517.api"
-
-[tool]
-[tool.pdm]
