@@ -13,7 +13,11 @@ classifiers=[
     "Programming Language :: Python :: 3.10",
     "Operating System :: OS Independent",
 ]
-keywords="decorator, exception, catch"
+keywords=[
+    "decorator",
+    "exception",
+    "catch"
+]
 license = {text = "MIT"}
 
 [project.urls]
