@@ -1,6 +1,6 @@
 [project]
 name = "la-catch"
-version = "0.1.0"
+version = "0.0.6"
 description = "Decorator to map exception to functions"
 authors = [
     {name = "thiagola92", email = "thiagola92@gmail.com"},
