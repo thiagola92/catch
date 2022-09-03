@@ -1,7 +1,10 @@
 from asyncio import iscoroutinefunction
-from typing import Any, Awaitable, Callable
+from typing import Any, Awaitable, Callable, ParamSpec, TypeVar
 
 from la_catch.utility import get_arguments
+
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
 class Catch:
@@ -38,12 +41,15 @@ class Catch:
 
         return True
 
-    def __call__(self, func: Callable) -> Callable:
+    def __call__(self, func: Callable[P, R]) -> Callable[P, R | Any]:
         def wrapper(*args, **kwargs):
             args, kwargs = get_arguments(func=func, args=args, kwargs=kwargs)
 
             with self.__class__(
-                self._exceptions, self._callback, *args, **kwargs
+                self._exceptions,
+                self._callback,
+                *args,
+                **kwargs,
             ) as catch:
                 return func(*args, **kwargs)
             return catch.callback_return  # when context manager above raise exception
@@ -52,7 +58,10 @@ class Catch:
             args, kwargs = get_arguments(func=func, args=args, kwargs=kwargs)
 
             async with self.__class__(
-                self._exceptions, self._callback, *args, **kwargs
+                self._exceptions,
+                self._callback,
+                *args,
+                **kwargs,
             ) as catch:
                 return await func(*args, **kwargs)
             return catch.callback_return  # when context manager above raise exception
